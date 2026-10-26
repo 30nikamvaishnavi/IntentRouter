@@ -1,0 +1,82 @@
+[
+  {
+    "message": "I'm still waiting for my new debit card to arrive in the mail, it's been over two weeks.",
+    "expected_intent": "card_arrival"
+  },
+  {
+    "message": "My card was swallowed by an ATM on High Street and I need it back immediately.",
+    "expected_intent": "card_swallowed"
+  },
+  {
+    "message": "I entered the wrong PIN three times and now my debit card chip is blocked.",
+    "expected_intent": "pin_blocked"
+  },
+  {
+    "message": "What is the exchange rate for converting US dollars to Euros today?",
+    "expected_intent": "exchange_rate"
+  },
+  {
+    "message": "Someone made an unauthorized purchase of $340 at a store I've never been to.",
+    "expected_intent": "card_payment_not_recognised"
+  },
+  {
+    "message": "How do I activate the new contactless card that just came in the post?",
+    "expected_intent": "activate_my_card"
+  },
+  {
+    "message": "Why was my wire transfer declined when I have plenty of funds in my checking account?",
+    "expected_intent": "declined_transfer"
+  },
+  {
+    "message": "Can I connect my debit card to Apple Pay or Google Wallet on my phone?",
+    "expected_intent": "apple_pay_or_google_pay"
+  },
+  {
+    "message": "How long does an international bank transfer usually take to arrive in the recipient's account?",
+    "expected_intent": "transfer_timing"
+  },
+  {
+    "message": "I lost my smartphone on the train and I am worried someone might access my mobile banking app.",
+    "expected_intent": "lost_or_stolen_phone"
+  },
+  {
+    "message": "I need to cancel the payment I sent by mistake 10 minutes ago.",
+    "expected_intent": "cancel_transfer"
+  },
+  {
+    "message": "I would like to permanently close and terminate my banking account with you.",
+    "expected_intent": "terminate_account"
+  },
+  {
+    "message": "Why was I charged a five dollar fee for withdrawing cash at the ATM machine?",
+    "expected_intent": "cash_withdrawal_charge"
+  },
+  {
+    "message": "Can I generate a disposable virtual card for one-time online shopping?",
+    "expected_intent": "get_disposable_virtual_card"
+  },
+  {
+    "message": "I deposited a cheque at the branch yesterday but my account balance has not updated yet.",
+    "expected_intent": "balance_not_updated_after_cheque_or_cash_deposit"
+  },
+  {
+    "message": "What is the weather forecast in London this weekend?",
+    "expected_intent": "OUT_OF_SCOPE"
+  },
+  {
+    "message": "Can you give me a recipe for homemade chocolate chip cookies?",
+    "expected_intent": "OUT_OF_SCOPE"
+  },
+  {
+    "message": "Who won the FIFA World Cup in 2022?",
+    "expected_intent": "OUT_OF_SCOPE"
+  },
+  {
+    "message": "Write a Python script to sort an array using quicksort algorithm.",
+    "expected_intent": "OUT_OF_SCOPE"
+  },
+  {
+    "message": "Can you recommend a good sci-fi movie to watch on Netflix tonight?",
+    "expected_intent": "OUT_OF_SCOPE"
+  }
+]

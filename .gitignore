@@ -1,0 +1,35 @@
+# Node & Web Build
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Python & ML Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+venv/
+.venv/
+env/
+
+# ML Artifacts, Checkpoints & SQLite Caches
+*.pt
+*.bin
+*.safetensors
+*.joblib
+*.db
+artifacts/
+distilbert_full/
+distilbert_lora/
+
+# Tokens and Keys
+*.key
+*.pem
+hf_token*
+*secret*

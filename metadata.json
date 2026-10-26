@@ -1,0 +1,6 @@
+{
+  "name": "IntentRouter - Banking Intent Classifier & Benchmarking Suite",
+  "description": "Fine-tune small language models (DistilBERT, LoRA) for banking intent classification on Banking77 and compare against zero-shot Gemini with metrics, cost, latency, error analysis, and Gradio/Colab tooling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1607 @@
+{
+  "is_sample_data": true,
+  "version": "1.0.0",
+  "metadata": {
+    "project_name": "IntentRouter - Banking Intent Classification & Benchmarking",
+    "run_date": "2026-10-24 18:42:15 UTC",
+    "seed": 42,
+    "hardware": {
+      "gpu_name": "NVIDIA Tesla T4 (Google Colab)",
+      "gpu_count": 1,
+      "gpu_memory_gb": 15.0,
+      "cpu_name": "Intel Xeon @ 2.20GHz (2 vCPUs)",
+      "cpu_cores": 2,
+      "ram_gb": 12.7
+    },
+    "libraries": {
+      "python": "3.11.9",
+      "torch": "2.4.0+cu121",
+      "transformers": "4.44.2",
+      "peft": "0.12.0",
+      "datasets": "2.21.0",
+      "scikit_learn": "1.5.1",
+      "google_genai": "0.3.0"
+    },
+    "dataset": {
+      "dataset_name": "PolyAI/banking77",
+      "source_url": "https://huggingface.co/datasets/PolyAI/banking77",
+      "num_classes": 77,
+      "train_samples": 9003,
+      "val_samples": 1000,
+      "test_full_samples": 3080,
+      "test_subset_samples": 308,
+      "subset_samples_per_class": 4,
+      "data_source_used": "PolyAI/banking77 (fallback AutoIntent/banking77 verified)"
+    },
+    "author": "IntentRouter Benchmark Pipeline",
+    "gemini_model": "gemini-2.5-flash"
+  },
+  "models": [
+    {
+      "id": "baseline_tfidf",
+      "name": "TF-IDF (1-2 grams) + Logistic Regression",
+      "category": "baseline",
+      "is_baseline": true,
+      "is_local": true,
+      "accuracy_full": 0.8523,
+      "macro_f1_full": 0.8468,
+      "weighted_f1_full": 0.8519,
+      "top3_accuracy_full": 0.9412,
+      "accuracy_subset_308": 0.8506,
+      "macro_f1_subset_308": 0.8451,
+      "weighted_f1_subset_308": 0.8502,
+      "top3_accuracy_subset_308": 0.9383,
+      "latency_cpu_ms": 1.42,
+      "latency_gpu_ms": null,
+      "model_size_mb": 18.4,
+      "estimated_cost_per_1k": 0.0004,
+      "cost_type": "compute_estimate",
+      "trainable_params": 142500,
+      "total_params": 142500,
+      "trainable_params_percent": 100.0,
+      "training_time_sec": 8.4,
+      "gpu_vram_peak_mb": 0,
+      "notes": "Classic linear n-gram baseline. Fast CPU inference, solid baseline for high-frequency terms but struggles with subtle paraphrasing."
+    },
+    {
+      "id": "distilbert_full",
+      "name": "DistilBERT (Full Fine-Tuning)",
+      "category": "fine_tuned",
+      "is_baseline": false,
+      "is_local": true,
+      "accuracy_full": 0.9282,
+      "macro_f1_full": 0.9244,
+      "weighted_f1_full": 0.9279,
+      "top3_accuracy_full": 0.9685,
+      "accuracy_subset_308": 0.9253,
+      "macro_f1_subset_308": 0.9218,
+      "weighted_f1_subset_308": 0.9249,
+      "top3_accuracy_subset_308": 0.9675,
+      "latency_cpu_ms": 12.8,
+      "latency_gpu_ms": 2.31,
+      "model_size_mb": 268.0,
+      "estimated_cost_per_1k": 0.0036,
+      "cost_type": "compute_estimate",
+      "trainable_params": 66955085,
+      "total_params": 66955085,
+      "trainable_params_percent": 100.0,
+      "training_time_sec": 342.6,
+      "gpu_vram_peak_mb": 4210,
+      "notes": "Full fine-tuning with 6 transformer layers. Highest overall accuracy and robust semantic comprehension across all 77 intent boundaries."
+    },
+    {
+      "id": "distilbert_lora",
+      "name": "DistilBERT + LoRA (PEFT r=16, \u03b1=32)",
+      "category": "peft",
+      "is_baseline": false,
+      "is_local": true,
+      "accuracy_full": 0.9214,
+      "macro_f1_full": 0.9178,
+      "weighted_f1_full": 0.9211,
+      "top3_accuracy_full": 0.9643,
+      "accuracy_subset_308": 0.9188,
+      "macro_f1_subset_308": 0.9152,
+      "weighted_f1_subset_308": 0.9185,
+      "top3_accuracy_subset_308": 0.9642,
+      "latency_cpu_ms": 12.8,
+      "latency_gpu_ms": 2.34,
+      "model_size_mb": 2.4,
+      "estimated_cost_per_1k": 0.0036,
+      "cost_type": "compute_estimate",
+      "trainable_params": 590669,
+      "total_params": 67545754,
+      "trainable_params_percent": 0.874,
+      "training_time_sec": 218.4,
+      "gpu_vram_peak_mb": 1820,
+      "notes": "Low-Rank Adaptation targeting query & value projection matrices. Trains 99.13% fewer parameters with only a 0.68% accuracy drop."
+    },
+    {
+      "id": "distilbert_quantized",
+      "name": "DistilBERT (PyTorch Dynamic INT8 Quantized)",
+      "category": "quantized",
+      "is_baseline": false,
+      "is_local": true,
+      "accuracy_full": 0.924,
+      "macro_f1_full": 0.9196,
+      "weighted_f1_full": 0.9237,
+      "top3_accuracy_full": 0.9662,
+      "accuracy_subset_308": 0.9221,
+      "macro_f1_subset_308": 0.918,
+      "weighted_f1_subset_308": 0.9217,
+      "top3_accuracy_subset_308": 0.9643,
+      "latency_cpu_ms": 5.62,
+      "latency_gpu_ms": null,
+      "model_size_mb": 67.2,
+      "estimated_cost_per_1k": 0.0016,
+      "cost_type": "compute_estimate",
+      "trainable_params": 0,
+      "total_params": 66955085,
+      "trainable_params_percent": 0.0,
+      "training_time_sec": 12.0,
+      "gpu_vram_peak_mb": 0,
+      "notes": "Dynamic 8-bit integer quantization applied to Linear layers on CPU. 2.28x CPU speedup and 4x disk/RAM reduction with only -0.42% accuracy penalty."
+    },
+    {
+      "id": "gemini_zero_shot",
+      "name": "Gemini 2.5 Flash (Zero-Shot Baseline)",
+      "category": "api",
+      "is_baseline": false,
+      "is_local": false,
+      "accuracy_full": 0.8734,
+      "macro_f1_full": 0.8682,
+      "weighted_f1_full": 0.8728,
+      "top3_accuracy_full": null,
+      "accuracy_subset_308": 0.8734,
+      "macro_f1_subset_308": 0.8682,
+      "weighted_f1_subset_308": 0.8728,
+      "top3_accuracy_subset_308": null,
+      "latency_cpu_ms": 582.0,
+      "latency_gpu_ms": null,
+      "model_size_mb": 0.0,
+      "estimated_cost_per_1k": 0.0385,
+      "cost_type": "api_pricing",
+      "notes": "Zero-shot prompt with strict response schema enum constrained to 77 intent names. Evaluated on stratified 308-sample test subset due to rate limits."
+    },
+    {
+      "id": "gemini_few_shot",
+      "name": "Gemini 2.5 Flash (5-Shot in-context)",
+      "category": "api",
+      "is_baseline": false,
+      "is_local": false,
+      "accuracy_full": 0.9058,
+      "macro_f1_full": 0.9014,
+      "weighted_f1_full": 0.9052,
+      "top3_accuracy_full": null,
+      "accuracy_subset_308": 0.9058,
+      "macro_f1_subset_308": 0.9014,
+      "weighted_f1_subset_308": 0.9052,
+      "top3_accuracy_subset_308": null,
+      "latency_cpu_ms": 845.0,
+      "latency_gpu_ms": null,
+      "model_size_mb": 0.0,
+      "estimated_cost_per_1k": 0.185,
+      "cost_type": "api_pricing",
+      "notes": "5 stratified banking training demonstrations prepended to prompt context. Improves rare intent discernment (+3.2% acc) at 4.8x cost."
+    }
+  ],
+  "training_curves": {
+    "distilbert_full": [
+      {
+        "epoch": 1,
+        "train_loss": 1.7482,
+        "val_loss": 0.6214,
+        "val_accuracy": 0.859,
+        "val_macro_f1": 0.8512,
+        "learning_rate": 5e-05
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.3845,
+        "val_loss": 0.382,
+        "val_accuracy": 0.916,
+        "val_macro_f1": 0.9118,
+        "learning_rate": 3.3e-05
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.162,
+        "val_loss": 0.3415,
+        "val_accuracy": 0.929,
+        "val_macro_f1": 0.9252,
+        "learning_rate": 1.7e-05
+      }
+    ],
+    "distilbert_lora": [
+      {
+        "epoch": 1,
+        "train_loss": 2.124,
+        "val_loss": 0.812,
+        "val_accuracy": 0.832,
+        "val_macro_f1": 0.824,
+        "learning_rate": 0.0002
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.541,
+        "val_loss": 0.435,
+        "val_accuracy": 0.908,
+        "val_macro_f1": 0.9035,
+        "learning_rate": 0.000133
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.283,
+        "val_loss": 0.389,
+        "val_accuracy": 0.922,
+        "val_macro_f1": 0.9184,
+        "learning_rate": 6.7e-05
+      }
+    ]
+  },
+  "error_analysis": {
+    "best_model_id": "distilbert_full",
+    "confused_pairs": [
+      {
+        "rank": 1,
+        "true_intent": "card_arrival",
+        "predicted_intent": "card_delivery_estimate",
+        "count": 14,
+        "percentage_of_class_errors": 35.0,
+        "explanation": "High lexical overlap regarding expected card delivery windows vs physical card shipment confirmation."
+      },
+      {
+        "rank": 2,
+        "true_intent": "card_payment_fee_charged",
+        "predicted_intent": "extra_charge_on_statement",
+        "count": 11,
+        "percentage_of_class_errors": 27.5,
+        "explanation": "Customers questioning an unfamiliar fee when paying by card vs generic extra charges."
+      },
+      {
+        "rank": 3,
+        "true_intent": "transfer_not_received_by_recipient",
+        "predicted_intent": "pending_transfer",
+        "count": 10,
+        "percentage_of_class_errors": 25.0,
+        "explanation": "Both describe transfers in transit; difference hinges on whether expected arrival timestamp has elapsed."
+      },
+      {
+        "rank": 4,
+        "true_intent": "balance_not_updated_after_cheque_or_cash_deposit",
+        "predicted_intent": "balance_not_updated_after_bank_transfer",
+        "count": 9,
+        "percentage_of_class_errors": 22.5,
+        "explanation": "Both represent delayed account crediting; fine distinction rests entirely on deposit mechanism keywords."
+      },
+      {
+        "rank": 5,
+        "true_intent": "declined_card_payment",
+        "predicted_intent": "card_not_working",
+        "count": 8,
+        "percentage_of_class_errors": 20.0,
+        "explanation": "Ambiguous complaint phrasing ('my card didn't go through at checkout') could signify POS decline or chip/PIN malfunction."
+      },
+      {
+        "rank": 6,
+        "true_intent": "exchange_charge",
+        "predicted_intent": "exchange_rate",
+        "count": 8,
+        "percentage_of_class_errors": 20.0,
+        "explanation": "Foreign currency conversion queries conflating FX spreads/markup with explicit conversion commissions."
+      },
+      {
+        "rank": 7,
+        "true_intent": "lost_or_stolen_card",
+        "predicted_intent": "compromised_card",
+        "count": 7,
+        "percentage_of_class_errors": 17.5,
+        "explanation": "Distinction between physical loss of card vs virtual credential compromise or skimming."
+      },
+      {
+        "rank": 8,
+        "true_intent": "top_up_failed",
+        "predicted_intent": "top_up_reverted",
+        "count": 7,
+        "percentage_of_class_errors": 17.5,
+        "explanation": "Immediate top-up processing rejection vs post-authorization rollback."
+      },
+      {
+        "rank": 9,
+        "true_intent": "get_disposable_virtual_card",
+        "predicted_intent": "getting_virtual_card",
+        "count": 6,
+        "percentage_of_class_errors": 15.0,
+        "explanation": "Single-use disposable virtual card request vs reusable permanent digital card issuance."
+      },
+      {
+        "rank": 10,
+        "true_intent": "cash_withdrawal_charge",
+        "predicted_intent": "atm_support",
+        "count": 6,
+        "percentage_of_class_errors": 15.0,
+        "explanation": "ATM operator fee complaints misclassified as general ATM locator inquiries."
+      },
+      {
+        "rank": 11,
+        "true_intent": "verify_source_of_funds",
+        "predicted_intent": "why_verify_identity",
+        "count": 5,
+        "percentage_of_class_errors": 12.5,
+        "explanation": "AML compliance proof-of-income request vs standard KYC photo ID verification."
+      },
+      {
+        "rank": 12,
+        "true_intent": "top_up_by_card_charge",
+        "predicted_intent": "top_up_by_bank_transfer_charge",
+        "count": 5,
+        "percentage_of_class_errors": 12.5,
+        "explanation": "Specific funding route fee confusion when customer omits exact deposit channel."
+      },
+      {
+        "rank": 13,
+        "true_intent": "card_payment_wrong_exchange_rate",
+        "predicted_intent": "wrong_exchange_rate_for_cash_withdrawal",
+        "count": 5,
+        "percentage_of_class_errors": 12.5,
+        "explanation": "FX rate dispute on merchant card purchase vs cash withdrawal abroad."
+      },
+      {
+        "rank": 14,
+        "true_intent": "cancel_transfer",
+        "predicted_intent": "failed_transfer",
+        "count": 4,
+        "percentage_of_class_errors": 10.0,
+        "explanation": "Customer request to abort an outgoing wire misclassified as an alert that the transfer failed."
+      },
+      {
+        "rank": 15,
+        "true_intent": "passcode_forgotten",
+        "predicted_intent": "pin_blocked",
+        "count": 4,
+        "percentage_of_class_errors": 10.0,
+        "explanation": "Mobile app login passcode reset confused with 4-digit chip debit PIN lockout."
+      }
+    ],
+    "misclassified_examples": [
+      {
+        "id": 1,
+        "text": "I went to buy groceries and the terminal buzzed red and rejected it.",
+        "true_label": "declined_card_payment",
+        "predicted_label": "card_not_working",
+        "confidence": 0.62,
+        "error_type": "lexical_overlap",
+        "explanation": "Model attended to terminal rejection symptoms rather than transactional decline code."
+      },
+      {
+        "id": 2,
+        "text": "My ordered debit card has still not shown up in the mail after two weeks.",
+        "true_label": "card_arrival",
+        "predicted_label": "card_delivery_estimate",
+        "confidence": 0.58,
+        "error_type": "subtle_boundary",
+        "explanation": "Model classified this as an ETA question rather than an overdue delivery complaint."
+      },
+      {
+        "id": 3,
+        "text": "Why is there an unexplained $4.50 charge on my recent transfer to France?",
+        "true_label": "transfer_fee_charged",
+        "predicted_label": "extra_charge_on_statement",
+        "confidence": 0.54,
+        "error_type": "multiple_intents",
+        "explanation": "Generic charge intent was favored over transfer-specific routing fee."
+      },
+      {
+        "id": 4,
+        "text": "My friend said he sent the wire yesterday at noon, but my ledger hasn't updated.",
+        "true_label": "receiving_money",
+        "predicted_label": "balance_not_updated_after_bank_transfer",
+        "confidence": 0.51,
+        "error_type": "subtle_boundary",
+        "explanation": "Ambiguity between tracking an inbound peer payment and internal account ledger lag."
+      },
+      {
+        "id": 5,
+        "text": "I want a new disposable card for shopping on this suspicious foreign website.",
+        "true_label": "get_disposable_virtual_card",
+        "predicted_label": "getting_virtual_card",
+        "confidence": 0.67,
+        "error_type": "subtle_boundary",
+        "explanation": "Dropped the single-use disposable modifier, routing to general virtual card."
+      },
+      {
+        "id": 6,
+        "text": "I forgot my 4 digit code for the cash machine and now it's stuck.",
+        "true_label": "card_swallowed",
+        "predicted_label": "passcode_forgotten",
+        "confidence": 0.49,
+        "error_type": "multiple_intents",
+        "explanation": "Contains two failure modes: forgotten PIN and confiscated physical card."
+      },
+      {
+        "id": 7,
+        "text": "Can I use Apple Pay on London Underground without touching the screen?",
+        "true_label": "apple_pay_or_google_pay",
+        "predicted_label": "contactless_not_working",
+        "confidence": 0.55,
+        "error_type": "lexical_overlap",
+        "explanation": "Presence of contactless transit keywords triggered card defect detector."
+      },
+      {
+        "id": 8,
+        "text": "I lost my phone on the train and somebody might access my banking application.",
+        "true_label": "lost_or_stolen_phone",
+        "predicted_label": "compromised_card",
+        "confidence": 0.53,
+        "error_type": "entity_ambiguity",
+        "explanation": "Device theft vs credential compromise."
+      },
+      {
+        "id": 9,
+        "text": "Why was I charged 3% more euros than the spot market rate when I paid in Rome?",
+        "true_label": "card_payment_wrong_exchange_rate",
+        "predicted_label": "exchange_rate",
+        "confidence": 0.64,
+        "error_type": "subtle_boundary",
+        "explanation": "FX rate dispute misclassified as general exchange rate quotation."
+      },
+      {
+        "id": 10,
+        "text": "You asked me for my tax returns and pay slips, what is this for?",
+        "true_label": "verify_source_of_funds",
+        "predicted_label": "why_verify_identity",
+        "confidence": 0.71,
+        "error_type": "subtle_boundary",
+        "explanation": "Proof of wealth inquiry conflated with identity KYC."
+      },
+      {
+        "id": 11,
+        "text": "How old do my teenagers have to be to open their own checking accounts?",
+        "true_label": "age_limit",
+        "predicted_label": "edit_personal_details",
+        "confidence": 0.47,
+        "error_type": "lexical_overlap",
+        "explanation": "Age inquiry mapped to personal profile editing."
+      },
+      {
+        "id": 12,
+        "text": "I tapped my card at the turnstile and nothing happened at all.",
+        "true_label": "contactless_not_working",
+        "predicted_label": "card_not_working",
+        "confidence": 0.68,
+        "error_type": "subtle_boundary",
+        "explanation": "Specific NFC contactless antenna failure mapped to general card malfunction."
+      },
+      {
+        "id": 13,
+        "text": "I tried to transfer money to my landlord and received error code 403 beneficiary blocked.",
+        "true_label": "beneficiary_not_allowed",
+        "predicted_label": "declined_transfer",
+        "confidence": 0.66,
+        "error_type": "subtle_boundary",
+        "explanation": "Payee whitelist restriction treated as generic transfer decline."
+      },
+      {
+        "id": 14,
+        "text": "I want to shut down my account forever and delete my personal records.",
+        "true_label": "terminate_account",
+        "predicted_label": "edit_personal_details",
+        "confidence": 0.52,
+        "error_type": "multiple_intents",
+        "explanation": "Customer combined account closure with GDPR erasure request."
+      },
+      {
+        "id": 15,
+        "text": "Can I pay in Swiss Francs with my standard Mastercard without pre-converting?",
+        "true_label": "supported_cards_and_currencies",
+        "predicted_label": "fiat_currency_support",
+        "confidence": 0.59,
+        "error_type": "subtle_boundary",
+        "explanation": "Card multi-currency support confused with platform supported fiats."
+      },
+      {
+        "id": 16,
+        "text": "The ATM in Barcelona gave me 50 euros less than the receipt printed.",
+        "true_label": "wrong_amount_of_cash_received",
+        "predicted_label": "declined_cash_withdrawal",
+        "confidence": 0.61,
+        "error_type": "subtle_boundary",
+        "explanation": "Cash dispenser discrepancy misclassified as declined withdrawal."
+      },
+      {
+        "id": 17,
+        "text": "My direct debit for the gym was taken out twice on the exact same morning.",
+        "true_label": "transaction_charged_twice",
+        "predicted_label": "direct_debit_payment_not_recognised",
+        "confidence": 0.57,
+        "error_type": "multiple_intents",
+        "explanation": "Duplicate billing error confused with unauthorized recurring debit."
+      },
+      {
+        "id": 18,
+        "text": "Is there a limit on how much money I can top up from my debit card each day?",
+        "true_label": "top_up_limits",
+        "predicted_label": "topping_up_by_card",
+        "confidence": 0.7,
+        "error_type": "subtle_boundary",
+        "explanation": "Limit policy inquiry categorized under card funding action."
+      },
+      {
+        "id": 19,
+        "text": "I need to change my home mailing address because I just moved to Bristol.",
+        "true_label": "edit_personal_details",
+        "predicted_label": "card_arrival",
+        "confidence": 0.44,
+        "error_type": "entity_ambiguity",
+        "explanation": "Mailing address mention triggered postal dispatch intent."
+      },
+      {
+        "id": 20,
+        "text": "My virtual card is being declined when I enter the CVV on Netflix.",
+        "true_label": "virtual_card_not_working",
+        "predicted_label": "declined_card_payment",
+        "confidence": 0.63,
+        "error_type": "subtle_boundary",
+        "explanation": "Specific virtual card token failure routed to physical card decline queue."
+      }
+    ],
+    "per_class_f1": [
+      {
+        "class_id": 0,
+        "intent_name": "activate_my_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.975,
+        "recall": 0.975,
+        "f1_score": 0.975,
+        "rank": 2
+      },
+      {
+        "class_id": 1,
+        "intent_name": "age_limit",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.95,
+        "recall": 0.95,
+        "f1_score": 0.95,
+        "rank": 13
+      },
+      {
+        "class_id": 2,
+        "intent_name": "apple_pay_or_google_pay",
+        "category": "General Banking",
+        "test_count": 40,
+        "precision": 0.948,
+        "recall": 0.925,
+        "f1_score": 0.936,
+        "rank": 27
+      },
+      {
+        "class_id": 3,
+        "intent_name": "atm_support",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.895,
+        "recall": 0.85,
+        "f1_score": 0.872,
+        "rank": 62
+      },
+      {
+        "class_id": 4,
+        "intent_name": "automatic_top_up",
+        "category": "Top-Up",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 5
+      },
+      {
+        "class_id": 5,
+        "intent_name": "balance_not_updated_after_bank_transfer",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.829,
+        "recall": 0.85,
+        "f1_score": 0.839,
+        "rank": 69
+      },
+      {
+        "class_id": 6,
+        "intent_name": "balance_not_updated_after_cheque_or_cash_deposit",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.846,
+        "recall": 0.825,
+        "f1_score": 0.835,
+        "rank": 70
+      },
+      {
+        "class_id": 7,
+        "intent_name": "beneficiary_not_allowed",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 37
+      },
+      {
+        "class_id": 8,
+        "intent_name": "cancel_transfer",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.921,
+        "recall": 0.875,
+        "f1_score": 0.897,
+        "rank": 48
+      },
+      {
+        "class_id": 9,
+        "intent_name": "card_about_to_expire",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 6
+      },
+      {
+        "class_id": 10,
+        "intent_name": "card_acceptance",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.925,
+        "recall": 0.925,
+        "f1_score": 0.925,
+        "rank": 31
+      },
+      {
+        "class_id": 11,
+        "intent_name": "card_arrival",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.771,
+        "recall": 0.675,
+        "f1_score": 0.72,
+        "rank": 77
+      },
+      {
+        "class_id": 12,
+        "intent_name": "card_delivery_estimate",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.769,
+        "recall": 0.75,
+        "f1_score": 0.759,
+        "rank": 75
+      },
+      {
+        "class_id": 13,
+        "intent_name": "card_linking",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 18
+      },
+      {
+        "class_id": 14,
+        "intent_name": "card_not_working",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.816,
+        "recall": 0.775,
+        "f1_score": 0.795,
+        "rank": 74
+      },
+      {
+        "class_id": 15,
+        "intent_name": "card_payment_fee_charged",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.842,
+        "recall": 0.8,
+        "f1_score": 0.821,
+        "rank": 73
+      },
+      {
+        "class_id": 16,
+        "intent_name": "card_payment_not_recognised",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.897,
+        "recall": 0.875,
+        "f1_score": 0.886,
+        "rank": 56
+      },
+      {
+        "class_id": 17,
+        "intent_name": "card_payment_wrong_exchange_rate",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.875,
+        "recall": 0.875,
+        "f1_score": 0.875,
+        "rank": 61
+      },
+      {
+        "class_id": 18,
+        "intent_name": "card_swallowed",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.975,
+        "recall": 0.975,
+        "f1_score": 0.975,
+        "rank": 3
+      },
+      {
+        "class_id": 19,
+        "intent_name": "cash_withdrawal_charge",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.889,
+        "recall": 0.8,
+        "f1_score": 0.842,
+        "rank": 67
+      },
+      {
+        "class_id": 20,
+        "intent_name": "cash_withdrawal_not_recognised",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1_score": 0.9,
+        "rank": 47
+      },
+      {
+        "class_id": 21,
+        "intent_name": "change_pin",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.975,
+        "recall": 0.975,
+        "f1_score": 0.975,
+        "rank": 4
+      },
+      {
+        "class_id": 22,
+        "intent_name": "compromised_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.886,
+        "recall": 0.775,
+        "f1_score": 0.827,
+        "rank": 71
+      },
+      {
+        "class_id": 23,
+        "intent_name": "contactless_not_working",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 38
+      },
+      {
+        "class_id": 24,
+        "intent_name": "country_support",
+        "category": "General Banking",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.925,
+        "f1_score": 0.949,
+        "rank": 15
+      },
+      {
+        "class_id": 25,
+        "intent_name": "declined_card_payment",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.854,
+        "recall": 0.875,
+        "f1_score": 0.864,
+        "rank": 64
+      },
+      {
+        "class_id": 26,
+        "intent_name": "declined_cash_withdrawal",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.921,
+        "recall": 0.875,
+        "f1_score": 0.897,
+        "rank": 49
+      },
+      {
+        "class_id": 27,
+        "intent_name": "declined_transfer",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.919,
+        "recall": 0.85,
+        "f1_score": 0.883,
+        "rank": 58
+      },
+      {
+        "class_id": 28,
+        "intent_name": "direct_debit_payment_not_recognised",
+        "category": "Security & Fraud",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 39
+      },
+      {
+        "class_id": 29,
+        "intent_name": "disposable_card_limits",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 7
+      },
+      {
+        "class_id": 30,
+        "intent_name": "edit_personal_details",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.921,
+        "recall": 0.875,
+        "f1_score": 0.897,
+        "rank": 50
+      },
+      {
+        "class_id": 31,
+        "intent_name": "exchange_charge",
+        "category": "Fees & FX",
+        "test_count": 40,
+        "precision": 0.868,
+        "recall": 0.825,
+        "f1_score": 0.846,
+        "rank": 65
+      },
+      {
+        "class_id": 32,
+        "intent_name": "exchange_rate",
+        "category": "Fees & FX",
+        "test_count": 40,
+        "precision": 0.881,
+        "recall": 0.925,
+        "f1_score": 0.902,
+        "rank": 46
+      },
+      {
+        "class_id": 33,
+        "intent_name": "exchange_via_app",
+        "category": "Fees & FX",
+        "test_count": 40,
+        "precision": 0.947,
+        "recall": 0.9,
+        "f1_score": 0.923,
+        "rank": 34
+      },
+      {
+        "class_id": 34,
+        "intent_name": "extra_charge_on_statement",
+        "category": "Fees & FX",
+        "test_count": 40,
+        "precision": 0.837,
+        "recall": 0.9,
+        "f1_score": 0.867,
+        "rank": 63
+      },
+      {
+        "class_id": 35,
+        "intent_name": "failed_transfer",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.921,
+        "recall": 0.875,
+        "f1_score": 0.897,
+        "rank": 51
+      },
+      {
+        "class_id": 36,
+        "intent_name": "fiat_currency_support",
+        "category": "General Banking",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 19
+      },
+      {
+        "class_id": 37,
+        "intent_name": "get_disposable_virtual_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.944,
+        "recall": 0.85,
+        "f1_score": 0.895,
+        "rank": 54
+      },
+      {
+        "class_id": 38,
+        "intent_name": "get_physical_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.947,
+        "recall": 0.9,
+        "f1_score": 0.923,
+        "rank": 35
+      },
+      {
+        "class_id": 39,
+        "intent_name": "getting_spare_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.925,
+        "f1_score": 0.949,
+        "rank": 16
+      },
+      {
+        "class_id": 40,
+        "intent_name": "getting_virtual_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 40
+      },
+      {
+        "class_id": 41,
+        "intent_name": "lost_or_stolen_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.878,
+        "recall": 0.9,
+        "f1_score": 0.889,
+        "rank": 55
+      },
+      {
+        "class_id": 42,
+        "intent_name": "lost_or_stolen_phone",
+        "category": "Security & Fraud",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 8
+      },
+      {
+        "class_id": 43,
+        "intent_name": "order_physical_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.925,
+        "recall": 0.925,
+        "f1_score": 0.925,
+        "rank": 32
+      },
+      {
+        "class_id": 44,
+        "intent_name": "passcode_forgotten",
+        "category": "Security & Fraud",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 20
+      },
+      {
+        "class_id": 45,
+        "intent_name": "pending_card_payment",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 41
+      },
+      {
+        "class_id": 46,
+        "intent_name": "pending_cash_withdrawal",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.947,
+        "recall": 0.9,
+        "f1_score": 0.923,
+        "rank": 36
+      },
+      {
+        "class_id": 47,
+        "intent_name": "pending_top_up",
+        "category": "Top-Up",
+        "test_count": 40,
+        "precision": 0.947,
+        "recall": 0.925,
+        "f1_score": 0.936,
+        "rank": 28
+      },
+      {
+        "class_id": 48,
+        "intent_name": "pending_transfer",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.841,
+        "recall": 0.925,
+        "f1_score": 0.881,
+        "rank": 60
+      },
+      {
+        "class_id": 49,
+        "intent_name": "pin_blocked",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 9
+      },
+      {
+        "class_id": 50,
+        "intent_name": "receiving_money",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.897,
+        "recall": 0.875,
+        "f1_score": 0.886,
+        "rank": 57
+      },
+      {
+        "class_id": 51,
+        "intent_name": "Refund_not_showing_up",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.947,
+        "recall": 0.925,
+        "f1_score": 0.936,
+        "rank": 29
+      },
+      {
+        "class_id": 52,
+        "intent_name": "request_refund",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 21
+      },
+      {
+        "class_id": 53,
+        "intent_name": "reverted_card_payment?",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.925,
+        "recall": 0.925,
+        "f1_score": 0.925,
+        "rank": 33
+      },
+      {
+        "class_id": 54,
+        "intent_name": "supported_cards_and_currencies",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 42
+      },
+      {
+        "class_id": 55,
+        "intent_name": "terminate_account",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.95,
+        "recall": 0.95,
+        "f1_score": 0.95,
+        "rank": 14
+      },
+      {
+        "class_id": 56,
+        "intent_name": "top_up_by_bank_transfer_charge",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 43
+      },
+      {
+        "class_id": 57,
+        "intent_name": "top_up_by_card_charge",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.919,
+        "recall": 0.85,
+        "f1_score": 0.883,
+        "rank": 59
+      },
+      {
+        "class_id": 58,
+        "intent_name": "top_up_by_cash_or_cheque",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.925,
+        "f1_score": 0.949,
+        "rank": 17
+      },
+      {
+        "class_id": 59,
+        "intent_name": "top_up_failed",
+        "category": "Top-Up",
+        "test_count": 40,
+        "precision": 0.889,
+        "recall": 0.8,
+        "f1_score": 0.842,
+        "rank": 68
+      },
+      {
+        "class_id": 60,
+        "intent_name": "top_up_limits",
+        "category": "Top-Up",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 22
+      },
+      {
+        "class_id": 61,
+        "intent_name": "top_up_reverted",
+        "category": "Top-Up",
+        "test_count": 40,
+        "precision": 0.886,
+        "recall": 0.775,
+        "f1_score": 0.827,
+        "rank": 72
+      },
+      {
+        "class_id": 62,
+        "intent_name": "topping_up_by_card",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 44
+      },
+      {
+        "class_id": 63,
+        "intent_name": "transaction_charged_twice",
+        "category": "Fees & FX",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 23
+      },
+      {
+        "class_id": 64,
+        "intent_name": "transfer_fee_charged",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.868,
+        "recall": 0.825,
+        "f1_score": 0.846,
+        "rank": 66
+      },
+      {
+        "class_id": 65,
+        "intent_name": "transfer_into_account",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 24
+      },
+      {
+        "class_id": 66,
+        "intent_name": "transfer_not_received_by_recipient",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.8,
+        "recall": 0.7,
+        "f1_score": 0.747,
+        "rank": 76
+      },
+      {
+        "class_id": 67,
+        "intent_name": "transfer_timing",
+        "category": "Transfers",
+        "test_count": 40,
+        "precision": 0.947,
+        "recall": 0.925,
+        "f1_score": 0.936,
+        "rank": 30
+      },
+      {
+        "class_id": 68,
+        "intent_name": "unable_to_verify_identity",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 10
+      },
+      {
+        "class_id": 69,
+        "intent_name": "verify_my_identity",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 11
+      },
+      {
+        "class_id": 70,
+        "intent_name": "verify_source_of_funds",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.921,
+        "recall": 0.875,
+        "f1_score": 0.897,
+        "rank": 52
+      },
+      {
+        "class_id": 71,
+        "intent_name": "verify_top_up",
+        "category": "Top-Up",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 25
+      },
+      {
+        "class_id": 72,
+        "intent_name": "virtual_card_not_working",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 0.921,
+        "recall": 0.875,
+        "f1_score": 0.897,
+        "rank": 53
+      },
+      {
+        "class_id": 73,
+        "intent_name": "visa_or_mastercard",
+        "category": "Cards",
+        "test_count": 40,
+        "precision": 1.0,
+        "recall": 0.975,
+        "f1_score": 0.987,
+        "rank": 1
+      },
+      {
+        "class_id": 74,
+        "intent_name": "why_verify_identity",
+        "category": "Account & Identity",
+        "test_count": 40,
+        "precision": 0.949,
+        "recall": 0.925,
+        "f1_score": 0.937,
+        "rank": 26
+      },
+      {
+        "class_id": 75,
+        "intent_name": "wrong_amount_of_cash_received",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.974,
+        "recall": 0.95,
+        "f1_score": 0.962,
+        "rank": 12
+      },
+      {
+        "class_id": 76,
+        "intent_name": "wrong_exchange_rate_for_cash_withdrawal",
+        "category": "Cash & ATM",
+        "test_count": 40,
+        "precision": 0.923,
+        "recall": 0.9,
+        "f1_score": 0.911,
+        "rank": 45
+      }
+    ]
+  },
+  "robustness": {
+    "note": "Evaluated on a small synthetic test set (308 samples, 4 per class) perturbed with 3 real-world conversational variations: keyboard typos, all-lowercase without punctuation, and conversational filler words/hedges.",
+    "tests": [
+      {
+        "perturbation_type": "Keyboard Typos & Char Swaps",
+        "description": "Simulates mobile keyboard fat-finger errors (1-2 random character swaps, adjacent QWERTY substitutions, deletions).",
+        "samples_count": 308,
+        "clean_accuracy_distilbert": 0.9253,
+        "perturbed_accuracy_distilbert": 0.8864,
+        "delta_accuracy_distilbert": -0.0389,
+        "clean_accuracy_gemini": 0.8734,
+        "perturbed_accuracy_gemini": 0.8604,
+        "delta_accuracy_gemini": -0.013,
+        "example_original": "My ordered debit card has still not shown up in the mail.",
+        "example_perturbed": "My ordred debit crd has stil not shown up in the mial."
+      },
+      {
+        "perturbation_type": "All Lowercase & Punctuation Stripped",
+        "description": "Lowercases entire text and strips commas, question marks, periods, mimicking rushed customer support chats.",
+        "samples_count": 308,
+        "clean_accuracy_distilbert": 0.9253,
+        "perturbed_accuracy_distilbert": 0.9188,
+        "delta_accuracy_distilbert": -0.0065,
+        "clean_accuracy_gemini": 0.8734,
+        "perturbed_accuracy_gemini": 0.8701,
+        "delta_accuracy_gemini": -0.0033,
+        "example_original": "Why is there an unexplained $4.50 charge on my recent transfer to France?",
+        "example_perturbed": "why is there an unexplained 450 charge on my recent transfer to france"
+      },
+      {
+        "perturbation_type": "Conversational Fillers & Polite Hedges",
+        "description": "Prepends realistic human speech hedges: 'umm hey there, please can you help me quickly...'",
+        "samples_count": 308,
+        "clean_accuracy_distilbert": 0.9253,
+        "perturbed_accuracy_distilbert": 0.9026,
+        "delta_accuracy_distilbert": -0.0227,
+        "clean_accuracy_gemini": 0.8734,
+        "perturbed_accuracy_gemini": 0.8766,
+        "delta_accuracy_gemini": 0.0032,
+        "example_original": "I forgot my 4 digit code for the cash machine and now it's stuck.",
+        "example_perturbed": "umm hello there, sorry to bother you but basically I forgot my 4 digit code for the cash machine and now it's stuck please assist"
+      }
+    ]
+  },
+  "quantization": {
+    "base_model": "distilbert-base-uncased (FP32)",
+    "quantized_model": "distilbert-base-uncased (PyTorch Dynamic INT8)",
+    "quantization_method": "torch.quantization.quantize_dynamic on torch.nn.Linear (qint8)",
+    "accuracy_fp32": 0.9282,
+    "accuracy_int8": 0.924,
+    "accuracy_drop": -0.0042,
+    "size_fp32_mb": 268.0,
+    "size_int8_mb": 67.2,
+    "size_reduction_ratio": 3.99,
+    "latency_cpu_fp32_ms": 12.8,
+    "latency_cpu_int8_ms": 5.62,
+    "speedup_factor": 2.28
+  },
+  "cascade": {
+    "selected_threshold": 0.8,
+    "expected_calibration_error": 0.0242,
+    "note": "Evaluated on the 308-sample stratified test subset. Queries where small model confidence >= threshold are resolved locally; queries below threshold are routed to Gemini 2.5 Flash.",
+    "reliability_bins": [
+      {
+        "bin_index": 1,
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "mean_confidence": 0.065,
+        "accuracy": 0.082,
+        "sample_count": 12
+      },
+      {
+        "bin_index": 2,
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "mean_confidence": 0.155,
+        "accuracy": 0.16,
+        "sample_count": 18
+      },
+      {
+        "bin_index": 3,
+        "bin_lower": 0.2,
+        "bin_upper": 0.3,
+        "mean_confidence": 0.252,
+        "accuracy": 0.248,
+        "sample_count": 25
+      },
+      {
+        "bin_index": 4,
+        "bin_lower": 0.3,
+        "bin_upper": 0.4,
+        "mean_confidence": 0.354,
+        "accuracy": 0.362,
+        "sample_count": 34
+      },
+      {
+        "bin_index": 5,
+        "bin_lower": 0.4,
+        "bin_upper": 0.5,
+        "mean_confidence": 0.456,
+        "accuracy": 0.449,
+        "sample_count": 46
+      },
+      {
+        "bin_index": 6,
+        "bin_lower": 0.5,
+        "bin_upper": 0.6,
+        "mean_confidence": 0.551,
+        "accuracy": 0.54,
+        "sample_count": 68
+      },
+      {
+        "bin_index": 7,
+        "bin_lower": 0.6,
+        "bin_upper": 0.7,
+        "mean_confidence": 0.652,
+        "accuracy": 0.665,
+        "sample_count": 110
+      },
+      {
+        "bin_index": 8,
+        "bin_lower": 0.7,
+        "bin_upper": 0.8,
+        "mean_confidence": 0.758,
+        "accuracy": 0.771,
+        "sample_count": 195
+      },
+      {
+        "bin_index": 9,
+        "bin_lower": 0.8,
+        "bin_upper": 0.9,
+        "mean_confidence": 0.855,
+        "accuracy": 0.868,
+        "sample_count": 420
+      },
+      {
+        "bin_index": 10,
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "mean_confidence": 0.962,
+        "accuracy": 0.974,
+        "sample_count": 2152
+      }
+    ],
+    "threshold_steps": [
+      {
+        "threshold": 0.3,
+        "coverage": 0.9935,
+        "local_accuracy": 0.925,
+        "cascade_accuracy_subset_308": 0.9253,
+        "local_count_subset_308": 306,
+        "gemini_count_subset_308": 2,
+        "estimated_cost_per_1k": 0.0038,
+        "average_latency_ms": 16.5
+      },
+      {
+        "threshold": 0.35,
+        "coverage": 0.987,
+        "local_accuracy": 0.9276,
+        "cascade_accuracy_subset_308": 0.9286,
+        "local_count_subset_308": 304,
+        "gemini_count_subset_308": 4,
+        "estimated_cost_per_1k": 0.0041,
+        "average_latency_ms": 20.2
+      },
+      {
+        "threshold": 0.4,
+        "coverage": 0.9805,
+        "local_accuracy": 0.9305,
+        "cascade_accuracy_subset_308": 0.9318,
+        "local_count_subset_308": 302,
+        "gemini_count_subset_308": 6,
+        "estimated_cost_per_1k": 0.0043,
+        "average_latency_ms": 23.9
+      },
+      {
+        "threshold": 0.45,
+        "coverage": 0.9675,
+        "local_accuracy": 0.9329,
+        "cascade_accuracy_subset_308": 0.9351,
+        "local_count_subset_308": 298,
+        "gemini_count_subset_308": 10,
+        "estimated_cost_per_1k": 0.0047,
+        "average_latency_ms": 31.3
+      },
+      {
+        "threshold": 0.5,
+        "coverage": 0.9545,
+        "local_accuracy": 0.9354,
+        "cascade_accuracy_subset_308": 0.9383,
+        "local_count_subset_308": 294,
+        "gemini_count_subset_308": 14,
+        "estimated_cost_per_1k": 0.0052,
+        "average_latency_ms": 38.7
+      },
+      {
+        "threshold": 0.55,
+        "coverage": 0.9416,
+        "local_accuracy": 0.9379,
+        "cascade_accuracy_subset_308": 0.9416,
+        "local_count_subset_308": 290,
+        "gemini_count_subset_308": 18,
+        "estimated_cost_per_1k": 0.0056,
+        "average_latency_ms": 46.1
+      },
+      {
+        "threshold": 0.6,
+        "coverage": 0.9253,
+        "local_accuracy": 0.9404,
+        "cascade_accuracy_subset_308": 0.9416,
+        "local_count_subset_308": 285,
+        "gemini_count_subset_308": 23,
+        "estimated_cost_per_1k": 0.0062,
+        "average_latency_ms": 55.4
+      },
+      {
+        "threshold": 0.65,
+        "coverage": 0.9091,
+        "local_accuracy": 0.9429,
+        "cascade_accuracy_subset_308": 0.9448,
+        "local_count_subset_308": 280,
+        "gemini_count_subset_308": 28,
+        "estimated_cost_per_1k": 0.0068,
+        "average_latency_ms": 64.6
+      },
+      {
+        "threshold": 0.7,
+        "coverage": 0.8896,
+        "local_accuracy": 0.9489,
+        "cascade_accuracy_subset_308": 0.9448,
+        "local_count_subset_308": 274,
+        "gemini_count_subset_308": 34,
+        "estimated_cost_per_1k": 0.0074,
+        "average_latency_ms": 75.7
+      },
+      {
+        "threshold": 0.75,
+        "coverage": 0.8669,
+        "local_accuracy": 0.9551,
+        "cascade_accuracy_subset_308": 0.9481,
+        "local_count_subset_308": 267,
+        "gemini_count_subset_308": 41,
+        "estimated_cost_per_1k": 0.0083,
+        "average_latency_ms": 88.7
+      },
+      {
+        "threshold": 0.8,
+        "coverage": 0.8344,
+        "local_accuracy": 0.9611,
+        "cascade_accuracy_subset_308": 0.9481,
+        "local_count_subset_308": 257,
+        "gemini_count_subset_308": 51,
+        "estimated_cost_per_1k": 0.0094,
+        "average_latency_ms": 107.2
+      },
+      {
+        "threshold": 0.85,
+        "coverage": 0.776,
+        "local_accuracy": 0.9707,
+        "cascade_accuracy_subset_308": 0.9448,
+        "local_count_subset_308": 239,
+        "gemini_count_subset_308": 69,
+        "estimated_cost_per_1k": 0.0114,
+        "average_latency_ms": 140.5
+      },
+      {
+        "threshold": 0.9,
+        "coverage": 0.6818,
+        "local_accuracy": 0.9809,
+        "cascade_accuracy_subset_308": 0.9318,
+        "local_count_subset_308": 210,
+        "gemini_count_subset_308": 98,
+        "estimated_cost_per_1k": 0.0147,
+        "average_latency_ms": 194.2
+      },
+      {
+        "threshold": 0.95,
+        "coverage": 0.5422,
+        "local_accuracy": 0.994,
+        "cascade_accuracy_subset_308": 0.9091,
+        "local_count_subset_308": 167,
+        "gemini_count_subset_308": 141,
+        "estimated_cost_per_1k": 0.0196,
+        "average_latency_ms": 273.8
+      }
+    ]
+  }
+}
