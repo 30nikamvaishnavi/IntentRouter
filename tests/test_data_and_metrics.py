@@ -232,6 +232,99 @@ def test_check_messages_pipeline_and_validation():
     assert shares[0.8] == 1 / 6
 
 
+
+def test_make_readme_results_validation():
+    """Test 7: Verify ml/make_readme_results strict validation and error rules."""
+    from ml.make_readme_results import (
+        validate_file_path,
+        validate_bundle_metadata,
+        format_model_comparison_table
+    )
+
+    # 1. Rejection of paths with 'sample' or in 'public/'
+    try:
+        validate_file_path("results/sample_data.json")
+        assert False, "Should have rejected path containing 'sample'"
+    except ValueError as e:
+        assert "forbidden" in str(e).lower()
+
+    try:
+        validate_file_path("public/results_bundle.json")
+        assert False, "Should have rejected path in 'public/'"
+    except ValueError as e:
+        assert "forbidden" in str(e).lower()
+
+    # 2. Rejection of bundle with is_sample_data: True
+    sample_bundle = {
+        "is_sample_data": True,
+        "metadata": {
+            "run_date": "2026-10-26 12:00:00 UTC",
+            "hardware": {"gpu_name": "Tesla T4"},
+            "libraries": {"torch": "2.4.0", "transformers": "4.44.2"}
+        }
+    }
+    try:
+        validate_bundle_metadata(sample_bundle, "test_bundle.json")
+        assert False, "Should have rejected bundle with sample flag"
+    except ValueError as e:
+        assert "sample flag is set" in str(e).lower()
+
+    # 3. Rejection of bundle missing run_date
+    missing_date_bundle = {
+        "is_sample_data": False,
+        "metadata": {
+            "run_date": "",
+            "hardware": {"gpu_name": "Tesla T4"},
+            "libraries": {"torch": "2.4.0", "transformers": "4.44.2"}
+        }
+    }
+    try:
+        validate_bundle_metadata(missing_date_bundle, "test_bundle.json")
+        assert False, "Should have rejected bundle missing run_date"
+    except ValueError as e:
+        assert "run_date" in str(e).lower()
+
+    # 4. Rejection of bundle missing gpu_name
+    missing_gpu_bundle = {
+        "is_sample_data": False,
+        "metadata": {
+            "run_date": "2026-10-26 12:00:00 UTC",
+            "hardware": {},
+            "libraries": {"torch": "2.4.0", "transformers": "4.44.2"}
+        }
+    }
+    try:
+        validate_bundle_metadata(missing_gpu_bundle, "test_bundle.json")
+        assert False, "Should have rejected bundle missing gpu_name"
+    except ValueError as e:
+        assert "gpu_name" in str(e).lower()
+
+    # 5. Rejection of bundle missing libraries
+    missing_libs_bundle = {
+        "is_sample_data": False,
+        "metadata": {
+            "run_date": "2026-10-26 12:00:00 UTC",
+            "hardware": {"gpu_name": "Tesla T4"},
+            "libraries": {}
+        }
+    }
+    try:
+        validate_bundle_metadata(missing_libs_bundle, "test_bundle.json")
+        assert False, "Should have rejected bundle missing libraries"
+    except ValueError as e:
+        assert "libraries" in str(e).lower()
+
+    # 6. Rejection of missing values in tables (never fill missing values)
+    incomplete_models = [
+        {"name": "Model A", "accuracy_full": 0.90}  # missing latency, cost, macro_f1
+    ]
+    try:
+        format_model_comparison_table(incomplete_models)
+        assert False, "Should have rejected model missing required metric fields"
+    except ValueError as e:
+        assert "missing" in str(e).lower()
+
+
 if __name__ == "__main__":
     print("Running IntentRouter Unit Tests...")
     test_intent_labels_count_and_uniqueness()
@@ -246,5 +339,8 @@ if __name__ == "__main__":
     print("✓ Test 5: Cascade analysis and ECE calibration calculation PASSED")
     test_check_messages_pipeline_and_validation()
     print("✓ Test 6: Check messages validation, error handling, and threshold shares PASSED")
+    test_make_readme_results_validation()
+    print("✓ Test 7: make_readme_results strict validation and error rules PASSED")
     print("\nALL UNIT TESTS PASSED SUCCESSFULLY!")
+
 
